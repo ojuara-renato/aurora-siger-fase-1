@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório Técnico de Telemetria — Pré-Decolagem</title>
+  <style>
+    :root {
+      --bg-body: #0b0f19;
+      --card-bg: #151c2c;
+      --border-color: #2a364f;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --safe-bg: rgba(34, 197, 94, 0.15);
+      --safe-border: #22c55e;
+      --safe-text: #4ade80;
+      --unsafe-bg: rgba(239, 68, 68, 0.15);
+      --unsafe-border: #ef4444;
+      --unsafe-text: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      margin: 0;
+      padding: 30px 15px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .report-container {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    header {
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .meta-info {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+      border-left: 4px solid var(--primary);
+      padding-left: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .data-table th, .data-table td {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .data-table th {
+      background-color: #1e293b;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .badge-safe {
+      background-color: var(--safe-bg);
+      border: 1px solid var(--safe-border);
+      color: var(--safe-text);
+    }
+
+    .badge-unsafe {
+      background-color: var(--unsafe-bg);
+      border: 1px solid var(--unsafe-border);
+      color: var(--unsafe-text);
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card.safe-border { border-top: 4px solid var(--safe-border); }
+    .card.unsafe-border { border-top: 4px solid var(--unsafe-border); }
+
+    .anomaly-list, .risk-list {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .anomaly-list li, .risk-list li {
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .status-banner {
+      padding: 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 1.1rem;
+    }
+
+    .status-banner.go {
+      background-color: var(--safe-bg);
+      border: 1px solid var(--safe-border);
+      color: var(--safe-text);
+    }
+
+    .status-banner.no-go {
+      background-color: var(--unsafe-bg);
+      border: 1px solid var(--unsafe-border);
+      color: var(--unsafe-text);
+    }
+
+    .risk-high {
+      color: var(--unsafe-text);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="report-container">
+
+  <header>
+    <div>
+      <h1>Relatório Geral de Telemetria</h1>
+      <span style="color: var(--text-muted); font-size: 0.85rem;">Fase de Pré-Decolagem (Checklist de Segurança)</span>
+    </div>
+    <div class="meta-info">
+      <strong>Sistema:</strong> Apolo-Sim-V2<br>
+      <strong>Sessão:</strong> Análise Comparativa (Cenários 01 & 02)
+    </div>
+  </header>
+
+  <!-- CENÁRIO 1 -->
+  <section>
+    <div class="section-title">Cenário 01 — Teste de Operação Nominal</div>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Parâmetro</th>
+          <th>Dado Coletado</th>
+          <th>Critério de Segurança</th>
+          <th>Classificação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Temperatura Interna</td>
+          <td>24 °C</td>
+          <td>0 °C a 40 °C</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+        <tr>
+          <td>Temperatura Externa</td>
+          <td>35 °C</td>
+          <td>-20 °C a 80 °C</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+        <tr>
+          <td>Integridade Estrutural</td>
+          <td>1 (Íntegra)</td>
+          <td>1 = Íntegra / 0 = Falha</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+        <tr>
+          <td>Nível de Energia</td>
+          <td>92%</td>
+          <td>Mínimo de 80%</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+        <tr>
+          <td>Pressão dos Tanques</td>
+          <td>2100 kPa</td>
+          <td>1800 kPa a 2500 kPa</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+        <tr>
+          <td>Status dos Módulos Críticos</td>
+          <td>Nominal</td>
+          <td>"Nominal" representa adequado</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid-two" style="margin-top: 15px;">
+      <div class="card safe-border">
+        <h3 style="color: var(--safe-text);">Anomalias Identificadas</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">Nenhuma anomalia detectada. Todos os parâmetros operam estritamente dentro da margem de tolerância estabelecida.</p>
+      </div>
+      <div class="card safe-border">
+        <h3 style="color: var(--safe-text);">Análise de Riscos & Recomendações</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;"><strong>Risco Residual:</strong> Mínimo ou nulo.<br><strong>Ação Recomendada:</strong> Manter cronograma padrão de contagem regressiva e autorizar o sequenciamento de lançamento.</p>
+      </div>
+    </div>
+
+    <div class="status-banner go" style="margin-top: 15px;">
+      Decisão de Voo: DECOLAGEM AUTORIZADA (GO)
+    </div>
+  </section>
+
+  <!-- CENÁRIO 2 -->
+  <section style="margin-top: 20px;">
+    <div class="section-title">Cenário 02 — Análise de Falhas e Sobrepressão</div>
+    
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Parâmetro</th>
+          <th>Dado Coletado</th>
+          <th>Critério de Segurança</th>
+          <th>Classificação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Temperatura Interna</td>
+          <td>24 °C</td>
+          <td>0 °C a 40 °C</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+        <tr>
+          <td>Temperatura Externa</td>
+          <td>35 °C</td>
+          <td>-20 °C a 80 °C</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+        <tr>
+          <td>Integridade Estrutural</td>
+          <td>1 (Íntegra)</td>
+          <td>1 = Íntegra / 0 = Falha</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+        <tr>
+          <td>Nível de Energia</td>
+          <td>72%</td>
+          <td>Mínimo de 80%</td>
+          <td><span class="badge badge-unsafe">Inseguro (-8%)</span></td>
+        </tr>
+        <tr>
+          <td>Pressão dos Tanques</td>
+          <td>2700 kPa</td>
+          <td>1800 kPa a 2500 kPa</td>
+          <td><span class="badge badge-unsafe">Inseguro (+200 kPa)</span></td>
+        </tr>
+        <tr>
+          <td>Status dos Módulos Críticos</td>
+          <td>Nominal</td>
+          <td>"Nominal" representa adequado</td>
+          <td><span class="badge badge-safe">Seguro</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid-two" style="margin-top: 15px;">
+      <div class="card unsafe-border">
+        <h3 style="color: var(--unsafe-text);">Anomalias Registradas</h3>
+        <ul class="anomaly-list">
+          <li><strong>Subalimentação Elétrica:</strong> Baterias com 72% de carga (déficit de 8 pontos percentuais do mínimo de segurança).</li>
+          <li><strong>Sobrepressão de Fluidos:</strong> Pressão nos tanques atingindo 2700 kPa (excede o limite superior em 200 kPa).</li>
+        </ul>
+      </div>
+      <div class="card unsafe-border">
+        <h3 style="color: var(--unsafe-text);">Riscos & Mitigações</h3>
+        <ul class="risk-list">
+          <li><span class="risk-high">[Risco Crítico]</span> <strong>Ruptura por Pressão:</strong> Risco de fratura de tubulações ou vazamento grave de combustível durante a ignição.</li>
+          <li><span class="risk-high">[Risco Operacional]</span> <strong>Apagão em Voo:</strong> Carga insuficiente para suportar a carga de energia necessária na subida.</li>
+          <li><strong>Mitigação:</strong> Purga imediata dos tanques para alívio de pressão e reconexão à torre de lançamento para carga de energia.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="status-banner no-go" style="margin-top: 15px;">
+      Decisão de Voo: ABORTAR DECOLAGEM (NO-GO)
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

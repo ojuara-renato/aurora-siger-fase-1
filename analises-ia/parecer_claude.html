@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise de Telemetria — Pré-Decolagem</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card-bg: #ffffff;
+    --text: #1b1f24;
+    --muted: #5b6572;
+    --border: #e2e5e9;
+    --accent: #2563eb;
+    --safe-bg: #e6f6ec;
+    --safe-text: #157347;
+    --unsafe-bg: #fdeceb;
+    --unsafe-text: #b3261e;
+    --header-bg: #0f172a;
+    --header-text: #f8fafc;
+    --alert-bg: #fdeceb;
+    --alert-border: #f3b4ae;
+    --nominal-bg: #e6f6ec;
+    --nominal-border: #a7d9b8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1115;
+      --card-bg: #171a21;
+      --text: #e7e9ee;
+      --muted: #9aa3b2;
+      --border: #2a2e37;
+      --accent: #5b8def;
+      --safe-bg: #113224;
+      --safe-text: #4ade80;
+      --unsafe-bg: #3a1414;
+      --unsafe-text: #f87171;
+      --header-bg: #0a0c10;
+      --header-text: #f8fafc;
+      --alert-bg: #3a1414;
+      --alert-border: #7a2b26;
+      --nominal-bg: #113224;
+      --nominal-border: #2f6b45;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1115;
+    --card-bg: #171a21;
+    --text: #e7e9ee;
+    --muted: #9aa3b2;
+    --border: #2a2e37;
+    --accent: #5b8def;
+    --safe-bg: #113224;
+    --safe-text: #4ade80;
+    --unsafe-bg: #3a1414;
+    --unsafe-text: #f87171;
+    --header-bg: #0a0c10;
+    --header-text: #f8fafc;
+    --alert-bg: #3a1414;
+    --alert-border: #7a2b26;
+    --nominal-bg: #113224;
+    --nominal-border: #2f6b45;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+  header {
+    background: var(--header-bg);
+    color: var(--header-text);
+    padding: 2.2rem 1.5rem 1.8rem;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.6rem;
+    letter-spacing: 0.02em;
+  }
+  header p {
+    margin: 0;
+    color: #b8c0cc;
+    font-size: 0.95rem;
+  }
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1.8rem 1.2rem 3rem;
+  }
+  .criteria {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 2rem;
+  }
+  .criteria h2 {
+    margin-top: 0;
+    font-size: 1.05rem;
+  }
+  .criteria ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.3rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .criteria li { margin-bottom: 0.3rem; }
+
+  .case {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.6rem 1.6rem 1.8rem;
+    margin-bottom: 2rem;
+  }
+  .case-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.1rem;
+  }
+  .case-title h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+  }
+  .badge.nominal { background: var(--nominal-bg); border-color: var(--nominal-border); color: var(--safe-text); }
+  .badge.alert { background: var(--alert-bg); border-color: var(--alert-border); color: var(--unsafe-text); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.4rem;
+    font-size: 0.92rem;
+  }
+  thead th {
+    text-align: left;
+    padding: 0.6rem 0.7rem;
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 0.6rem 0.7rem;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .status {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .status.safe { background: var(--safe-bg); color: var(--safe-text); }
+  .status.unsafe { background: var(--unsafe-bg); color: var(--unsafe-text); }
+
+  .section {
+    margin-top: 1.3rem;
+  }
+  .section h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.98rem;
+    color: var(--accent);
+  }
+  .section p, .section li {
+    font-size: 0.93rem;
+    color: var(--text);
+  }
+  .section ul {
+    margin: 0.3rem 0;
+    padding-left: 1.3rem;
+  }
+  .section ul li { margin-bottom: 0.4rem; }
+  .conclusion {
+    margin-top: 1.2rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  .conclusion.nominal { background: var(--nominal-bg); border: 1px solid var(--nominal-border); }
+  .conclusion.alert { background: var(--alert-bg); border: 1px solid var(--alert-border); }
+
+  .overflow-wrap {
+    overflow-x: auto;
+  }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    padding: 1.5rem 1rem 2rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🚀 Simulação de Telemetria — Espaçonave</h1>
+  <p>Análise de segurança em fase de pré-decolagem — dois cenários avaliados</p>
+</header>
+
+<main>
+
+  <div class="criteria">
+    <h2>Critérios de segurança adotados</h2>
+    <ul>
+      <li>Temperatura interna: entre 0 °C e 40 °C</li>
+      <li>Temperatura externa: entre -20 °C e 80 °C</li>
+      <li>Integridade estrutural: 1 = íntegra, 0 = falha</li>
+      <li>Nível de energia: mínimo de 80%</li>
+      <li>Pressão dos tanques: entre 1800 kPa e 2500 kPa</li>
+      <li>Status dos módulos críticos: "nominal" = funcionamento adequado</li>
+    </ul>
+  </div>
+
+  <!-- CASO 1 -->
+  <section class="case">
+    <div class="case-title">
+      <h2>Cenário 1</h2>
+      <span class="badge nominal">NOMINAL / SEGURO</span>
+    </div>
+
+    <div class="overflow-wrap">
+      <table>
+        <thead>
+          <tr><th>Parâmetro</th><th>Valor</th><th>Critério</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Temperatura interna</td><td>24 °C</td><td>0 a 40 °C</td><td><span class="status safe">Seguro</span></td></tr>
+          <tr><td>Temperatura externa</td><td>35 °C</td><td>-20 a 80 °C</td><td><span class="status safe">Seguro</span></td></tr>
+          <tr><td>Integridade estrutural</td><td>1</td><td>1 = íntegra</td><td><span class="status safe">Seguro</span></td></tr>
+          <tr><td>Nível de energia</td><td>92%</td><td>mínimo 80%</td><td><span class="status safe">Seguro</span></td></tr>
+          <tr><td>Pressão dos tanques</td><td>2100 kPa</td><td>1800 a 2500 kPa</td><td><span class="status safe">Seguro</span></td></tr>
+          <tr><td>Módulos críticos</td><td>nominal</td><td>"nominal" = adequado</td><td><span class="status safe">Seguro</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>Anomalias identificadas</h3>
+      <p>Nenhuma. Todos os parâmetros estão dentro das faixas seguras, sem valores no limite ou inconsistências.</p>
+    </div>
+
+    <div class="section">
+      <h3>Riscos associados</h3>
+      <ul>
+        <li>Nenhum risco ativo. Energia (92%) com boa margem acima do mínimo.</li>
+        <li>Pressão (2100 kPa) próxima ao ponto médio da faixa aceitável — configuração estável.</li>
+        <li>Temperatura interna (24 °C) com boa margem para ambos os limites.</li>
+      </ul>
+    </div>
+
+    <div class="conclusion nominal">
+      ✅ Conclusão: condições dentro dos limites aceitáveis. Status geral <strong>NOMINAL / SEGURO PARA PROSSEGUIR</strong>.
+    </div>
+  </section>
+
+  <!-- CASO 2 -->
+  <section class="case">
+    <div class="case-title">
+      <h2>Cenário 2</h2>
+      <span class="badge alert">ALERTA / ABORTAR</span>
+    </div>
+
+    <div class="overflow-wrap">
+      <table>
+        <thead>
+          <tr><th>Parâmetro</th><th>Valor</th><th>Critério</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Temperatura interna</td><td>24 °C</td><td>0 a 40 °C</td><td><span class="status safe">Seguro</span></td></tr>
+          <tr><td>Temperatura externa</td><td>35 °C</td><td>-20 a 80 °C</td><td><span class="status safe">Seguro</span></td></tr>
+          <tr><td>Integridade estrutural</td><td>1</td><td>1 = íntegra</td><td><span class="status safe">Seguro</span></td></tr>
+          <tr><td>Nível de energia</td><td>72%</td><td>mínimo 80%</td><td><span class="status unsafe">Inseguro</span></td></tr>
+          <tr><td>Pressão dos tanques</td><td>2700 kPa</td><td>1800 a 2500 kPa</td><td><span class="status unsafe">Inseguro</span></td></tr>
+          <tr><td>Módulos críticos</td><td>nominal</td><td>"nominal" = adequado</td><td><span class="status safe">Seguro</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>Anomalias identificadas</h3>
+      <ul>
+        <li><strong>Energia abaixo do mínimo:</strong> 72% está 8 pontos percentuais abaixo do limite de 80%.</li>
+        <li><strong>Sobrepressão nos tanques:</strong> 2700 kPa excede em 200 kPa o teto de 2500 kPa.</li>
+        <li><strong>Ocorrência simultânea:</strong> duas falhas ativas ao mesmo tempo, em sistemas frequentemente interligados.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>Riscos associados</h3>
+      <ul>
+        <li>Energia insuficiente pode comprometer válvulas, sensores e atuadores críticos.</li>
+        <li>Sobrepressão traz risco estrutural (fadiga, deformação ou ruptura) e possível vazamento de propelente.</li>
+        <li>A interação entre as duas falhas pode agravar o cenário, caso a resposta à sobrepressão dependa de energia insuficiente.</li>
+      </ul>
+    </div>
+
+    <div class="conclusion alert">
+      ⚠️ Conclusão: condições <strong>NÃO seguras</strong> para prosseguir. Status geral <strong>ALERTA / ABORTAR SEQUÊNCIA</strong> — intervenção corretiva necessária antes de nova avaliação.
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Relatório gerado a partir da simulação de telemetria de pré-decolagem.
+</footer>
+
+</body>
+</html>

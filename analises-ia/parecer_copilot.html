@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulação de Telemetria Espacial</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+        padding: 30px;
+        color: #333;
+    }
+
+    .report {
+        max-width: 1100px;
+        margin: 0 auto 50px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,.1);
+    }
+
+    h1 {
+        color: #1f4e79;
+        margin-top: 0;
+    }
+
+    h2 {
+        color: #2f5d8c;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: left;
+    }
+
+    th {
+        background: #f2f2f2;
+    }
+
+    .safe {
+        color: #2e7d32;
+        font-weight: bold;
+    }
+
+    .unsafe {
+        color: #c62828;
+        font-weight: bold;
+    }
+
+    .info {
+        background: #e8f5e9;
+        border-left: 6px solid #4caf50;
+        padding: 15px;
+        margin: 10px 0;
+    }
+
+    .warning {
+        background: #fff3e0;
+        border-left: 6px solid #ff9800;
+        padding: 15px;
+        margin: 10px 0;
+    }
+
+    .danger {
+        background: #ffebee;
+        border-left: 6px solid #d32f2f;
+        padding: 15px;
+        margin: 10px 0;
+    }
+
+    .summary-safe {
+        background: #e8f5e9;
+        border: 2px solid #4caf50;
+        padding: 20px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .summary-danger {
+        background: #ffebee;
+        border: 2px solid #d32f2f;
+        padding: 20px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- RELATÓRIO 1 -->
+<div class="report">
+
+<h1>Relatório de Telemetria - Cenário Seguro</h1>
+
+<h2>1. Classificação dos Parâmetros</h2>
+
+<table>
+<tr>
+    <th>Parâmetro</th>
+    <th>Critério</th>
+    <th>Valor</th>
+    <th>Classificação</th>
+</tr>
+<tr>
+    <td>Temperatura interna</td>
+    <td>0 °C a 40 °C</td>
+    <td>24 °C</td>
+    <td class="safe">Seguro</td>
+</tr>
+<tr>
+    <td>Temperatura externa</td>
+    <td>-20 °C a 80 °C</td>
+    <td>35 °C</td>
+    <td class="safe">Seguro</td>
+</tr>
+<tr>
+    <td>Integridade estrutural</td>
+    <td>1 = íntegra</td>
+    <td>1</td>
+    <td class="safe">Seguro</td>
+</tr>
+<tr>
+    <td>Nível de energia</td>
+    <td>Mínimo de 80%</td>
+    <td>92%</td>
+    <td class="safe">Seguro</td>
+</tr>
+<tr>
+    <td>Pressão dos tanques</td>
+    <td>1800 kPa a 2500 kPa</td>
+    <td>2100 kPa</td>
+    <td class="safe">Seguro</td>
+</tr>
+<tr>
+    <td>Status dos módulos críticos</td>
+    <td>Nominal</td>
+    <td>Nominal</td>
+    <td class="safe">Seguro</td>
+</tr>
+</table>
+
+<h2>2. Anomalias Identificadas</h2>
+
+<div class="info">
+Nenhuma anomalia foi identificada. Todos os parâmetros atendem aos critérios definidos para a simulação.
+</div>
+
+<h2>3. Riscos Associados</h2>
+
+<div class="info">
+Não foram identificados riscos operacionais com base nos critérios avaliados.
+</div>
+
+<h2>4. Conclusão Geral</h2>
+
+<div class="summary-safe">
+CONDIÇÃO GERAL: SEGURA
+<br><br>
+Todos os parâmetros analisados encontram-se dentro das faixas de segurança estabelecidas.
+A telemetria caracteriza uma condição nominal e compatível com os critérios definidos para a fase de pré-decolagem.
+</div>
+
+</div>
+
+<!-- RELATÓRIO 2 -->
+<div class="report">
+
+<h1>Relatório de Telemetria - Cenário Inseguro</h1>
+
+<h2>1. Classificação dos Parâmetros</h2>
+
+<table>
+<tr>
+    <th>Parâmetro</th>
+    <th>Critério</th>
+    <th>Valor</th>
+    <th>Classificação</th>
+</tr>
+<tr>
+    <td>Temperatura interna</td>
+    <td>0 °C a 40 °C</td>
+    <td>24 °C</td>
+    <td class="safe">Seguro</td>
+</tr>
+<tr>
+    <td>Temperatura externa</td>
+    <td>-20 °C a 80 °C</td>
+    <td>35 °C</td>
+    <td class="safe">Seguro</td>
+</tr>
+<tr>
+    <td>Integridade estrutural</td>
+    <td>1 = íntegra</td>
+    <td>1</td>
+    <td class="safe">Seguro</td>
+</tr>
+<tr>
+    <td>Nível de energia</td>
+    <td>Mínimo de 80%</td>
+    <td>72%</td>
+    <td class="unsafe">Inseguro</td>
+</tr>
+<tr>
+    <td>Pressão dos tanques</td>
+    <td>1800 kPa a 2500 kPa</td>
+    <td>2700 kPa</td>
+    <td class="unsafe">Inseguro</td>
+</tr>
+<tr>
+    <td>Status dos módulos críticos</td>
+    <td>Nominal</td>
+    <td>Nominal</td>
+    <td class="safe">Seguro</td>
+</tr>
+</table>
+
+<h2>2. Anomalias Identificadas</h2>
+
+<div class="warning">
+<strong>Nível de energia:</strong> 72%, abaixo do mínimo de 80%.
+</div>
+
+<div class="warning">
+<strong>Pressão dos tanques:</strong> 2700 kPa, acima do limite máximo de 2500 kPa.
+</div>
+
+<h2>3. Riscos Associados</h2>
+
+<div class="danger">
+<strong>Energia insuficiente:</strong> o requisito mínimo estabelecido para a operação não foi atendido.
+</div>
+
+<div class="danger">
+<strong>Pressão excessiva nos tanques:</strong> o sistema encontra-se fora da faixa operacional considerada segura.
+</div>
+
+<h2>4. Conclusão Geral</h2>
+
+<div class="summary-danger">
+CONDIÇÃO GERAL: INSEGURA
+<br><br>
+Foram identificadas duas violações dos critérios de segurança:
+<ul>
+    <li>Nível de energia abaixo do mínimo permitido.</li>
+    <li>Pressão dos tanques acima do limite máximo estabelecido.</li>
+</ul>
+
+Embora os demais parâmetros estejam dentro das faixas aceitáveis, a presença dessas anomalias torna a condição geral incompatível com os critérios definidos para a fase de pré-decolagem.
+</div>
+
+</div>
+
+</body>
+</html>
