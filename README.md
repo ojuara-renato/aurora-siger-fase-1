@@ -1,4 +1,4 @@
-# Aurora Siger — Fase 1
+# Aurora Siger - Fase 1
 
 Projeto desenvolvido como parte da Fase 1 da missão **Aurora Siger**, com foco na elaboração de um relatório operacional de pré-decolagem.
 
@@ -135,5 +135,5 @@ O relatório completo da atividade, contendo o desenvolvimento das etapas, premi
 
 **Renato Santiago de Araujo**  
 Curso de Ciências da Computação  
-FIAP ON — EAD  
+FIAP ON - EAD  
 Turma: 1º ano • 1CCOS • 2026/2
